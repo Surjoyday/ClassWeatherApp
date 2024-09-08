@@ -13,7 +13,7 @@ export default class WeatherDisplay extends React.Component {
 
     return (
       <div>
-        <h2>Weather for {this.props.location}</h2>
+        <h2>Weather {this.props.location}</h2>
         <ul className="weather">
           {dates.map((date, i) => (
             <Day
