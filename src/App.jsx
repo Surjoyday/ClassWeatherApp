@@ -3,23 +3,18 @@ import { convertToFlag } from "./utils/weatherHelper";
 import WeatherDisplay from "./components/WeatherDisplay";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      location: "lisbon",
-      isLoading: false,
-      displayLocation: "",
-      weather: {},
-    };
-    this.handleLocationInput = this.handleLocationInput.bind(this);
-    this.fetchWeather = this.fetchWeather.bind(this);
-  }
+  state = {
+    location: "lisbon",
+    isLoading: false,
+    displayLocation: "",
+    weather: {},
+  };
 
-  handleLocationInput(e) {
+  handleLocationInput = (e) => {
     this.setState({ location: e.target.value });
-  }
+  };
 
-  async fetchWeather() {
+  fetchWeather = async () => {
     try {
       this.setState({ isLoading: true });
       // Getting location (geocoding)
@@ -52,7 +47,7 @@ class App extends React.Component {
     } finally {
       this.setState({ isLoading: false });
     }
-  }
+  };
 
   render() {
     return (
