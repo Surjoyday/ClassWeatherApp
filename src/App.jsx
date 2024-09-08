@@ -1,5 +1,5 @@
 import React from "react";
-import { convertToFlag } from "./utils/weather";
+import { convertToFlag } from "./utils/weatherHelper";
 import WeatherDisplay from "./components/WeatherDisplay";
 
 class App extends React.Component {
@@ -16,7 +16,7 @@ class App extends React.Component {
   }
 
   handleLocationInput(e) {
-    this.setState({ loaction: e.target.value });
+    this.setState({ location: e.target.value });
   }
 
   async fetchWeather() {
