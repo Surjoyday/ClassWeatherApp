@@ -6,7 +6,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      location: "lisbon",
+      location: "",
       isLoading: false,
       displayLocation: "",
       weather: {},
@@ -48,7 +48,7 @@ class App extends React.Component {
 
       this.setState({ weather: weatherData.daily });
     } catch (err) {
-      console.err(err);
+      console.error(err);
     } finally {
       this.setState({ isLoading: false });
     }
@@ -59,11 +59,9 @@ class App extends React.Component {
       <div className="app">
         <h1>ClassWeatherApp</h1>
         <div>
-          <input
-            type="text"
-            placeholder="Search for loaction..."
-            value={this.state.location}
-            onChange={this.handleLocationInput}
+          <Input
+            location={this.state.location}
+            onLoactionInput={this.handleLocationInput}
           />
         </div>
         <button className="btn" onClick={this.fetchWeather}>
@@ -84,3 +82,16 @@ class App extends React.Component {
 }
 
 export default App;
+
+class Input extends React.Component {
+  render() {
+    return (
+      <input
+        type="text"
+        placeholder="Search for loaction..."
+        value={this.props.location}
+        onChange={this.props.onLoactionInput}
+      />
+    );
+  }
+}
