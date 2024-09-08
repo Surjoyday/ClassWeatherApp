@@ -1,10 +1,7 @@
 import React from "react";
+import { formatDay, getWeatherIcon } from "../utils/weatherHelper";
 
 export default class WeatherDisplay extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const {
       temperature_2m_max: maxTemp,
@@ -25,6 +22,7 @@ export default class WeatherDisplay extends React.Component {
               minTemp={minTemp.at(i)}
               code={codes.at(i)}
               date={dates.at(i)}
+              isToday={i === 0}
             />
           ))}
         </ul>
@@ -35,13 +33,14 @@ export default class WeatherDisplay extends React.Component {
 
 class Day extends React.Component {
   render() {
-    const { maxTemp, minTemp, code, date } = this.props;
+    const { maxTemp, minTemp, code, date, isToday } = this.props;
     return (
-      <li>
-        <p>{date}</p>
+      <li className="day">
+        <span>{getWeatherIcon(code)}</span>
+        <p>{isToday ? "Today" : formatDay(date)}</p>
         <p>
-          {parseFloat(minTemp).toFixed(0)}&deg; &mdash;{" "}
-          {parseFloat(maxTemp).toFixed(0)}&deg;
+          {Math.round(minTemp)}&deg; &mdash;{" "}
+          <strong>{Math.ceil(maxTemp)}&deg;</strong>
         </p>
       </li>
     );
