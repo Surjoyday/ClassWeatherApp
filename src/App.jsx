@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { convertToFlag } from "./utils/weatherHelper";
 import WeatherDisplay from "./components/WeatherDisplay";
 
@@ -9,6 +9,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [displayLocation, setDisplayLocation] = useState("");
   const [weather, setWeather] = useState({});
+
+  const timerRef = useRef(null);
 
   function handleLocationInput(e) {
     const inputValue = e.target.value;
@@ -57,39 +59,36 @@ function App() {
     [location]
   );
 
-  useEffect(
-    function () {
-      if (!location) {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          //   console.dir(pos);
-          const { latitude, longitude } = pos.coords;
+  useEffect(function () {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      //   console.dir(pos);
+      const { latitude, longitude } = pos.coords;
 
-          const res = await fetch(
-            `https://api-bdc.net/data/reverse-geocode?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${KEY}`
-          );
-          const data = await res.json();
-          console.log(data);
-          console.log(data.locality);
+      const res = await fetch(
+        `https://api-bdc.net/data/reverse-geocode?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${KEY}`
+      );
+      const data = await res.json();
+      console.log(data);
+      console.log(data.locality);
 
-          setLocation(data?.locality);
-        });
-      }
-
-      fetchWeather();
-    },
-    [fetchWeather, location]
-  );
+      setLocation(data?.locality);
+    });
+  }, []);
 
   useEffect(
     function () {
-      fetchWeather();
+      timerRef.current = setTimeout(() => {
+        fetchWeather();
+      }, 500);
+
+      return () => clearTimeout(timerRef.current);
     },
     [fetchWeather]
   );
 
   return (
     <div className="app">
-      <h1>Class-based Weather-App</h1>
+      <h1>Functional based Weather-App</h1>
       <div>
         <Input location={location} onLoactionInput={handleLocationInput} />
       </div>
