@@ -2,6 +2,8 @@ import React from "react";
 import { convertToFlag } from "./utils/weatherHelper";
 import WeatherDisplay from "./components/WeatherDisplay";
 
+const KEY = "bdc_44f973f8fab64e7ca7826166a2d50cb9";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -12,14 +14,13 @@ class App extends React.Component {
       weather: {},
     };
     this.handleLocationInput = this.handleLocationInput.bind(this);
-    this.fetchWeather = this.fetchWeather.bind(this);
   }
 
   handleLocationInput(e) {
     this.setState({ location: e.target.value });
   }
 
-  async fetchWeather() {
+  fetchWeather = async () => {
     try {
       this.setState({ isLoading: true });
       // Getting location (geocoding)
@@ -33,6 +34,7 @@ class App extends React.Component {
 
       const { latitude, longitude, timezone, name, country_code } =
         geoData.results.at(0);
+      console.log(timezone);
       console.log(`${name} ${convertToFlag(country_code)}`);
 
       this.setState({
@@ -52,21 +54,50 @@ class App extends React.Component {
     } finally {
       this.setState({ isLoading: false });
     }
+  };
+
+  // similar to useEffect with without dependecies -> useEffect[]
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      console.dir(pos);
+      const { latitude, longitude } = pos.coords;
+
+      const fetchLocationName = async () => {
+        const res = await fetch(
+          `https://api-bdc.net/data/reverse-geocode?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${KEY}`
+        );
+        const data = await res.json();
+        console.log(data);
+        console.log(data.locality);
+
+        // Set location, then fetch weather
+        this.setState({ location: data?.locality });
+      };
+
+      fetchLocationName();
+    });
+  }
+
+  // similar to useEffect with dependecies -> useEffect[loaction]
+  componentDidUpdate(prevProps, preState) {
+    if (this.state.location !== preState.location) {
+      this.fetchWeather();
+    }
   }
 
   render() {
     return (
       <div className="app">
-        <h1>ClassWeatherApp</h1>
+        <h1>Class-based Weather-App</h1>
         <div>
           <Input
             location={this.state.location}
             onLoactionInput={this.handleLocationInput}
           />
         </div>
-        <button className="btn" onClick={this.fetchWeather}>
+        {/* <button className="btn" onClick={this.fetchWeather}>
           Get weather
-        </button>
+        </button> */}
 
         {this.state.isLoading && <p className="loader">Loading....</p>}
         {/* <p>{this.state.displayLoaction}</p> */}
