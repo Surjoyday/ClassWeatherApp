@@ -21,6 +21,10 @@ class App extends React.Component {
   }
 
   fetchWeather = async () => {
+    if (this.state.location.length <= 2) {
+      this.setState({ weather: {} });
+      return;
+    }
     try {
       this.setState({ isLoading: true });
       // Getting location (geocoding)
@@ -58,23 +62,18 @@ class App extends React.Component {
 
   // similar to useEffect with without dependecies -> useEffect[]
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      console.dir(pos);
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      //   console.dir(pos);
       const { latitude, longitude } = pos.coords;
 
-      const fetchLocationName = async () => {
-        const res = await fetch(
-          `https://api-bdc.net/data/reverse-geocode?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${KEY}`
-        );
-        const data = await res.json();
-        console.log(data);
-        console.log(data.locality);
+      const res = await fetch(
+        `https://api-bdc.net/data/reverse-geocode?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${KEY}`
+      );
+      const data = await res.json();
+      console.log(data);
+      console.log(data.locality);
 
-        // Set location, then fetch weather
-        this.setState({ location: data?.locality });
-      };
-
-      fetchLocationName();
+      this.setState({ location: data?.locality });
     });
   }
 

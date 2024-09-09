@@ -2,6 +2,9 @@ import React from "react";
 import { formatDay, getWeatherIcon } from "../utils/weatherHelper";
 
 export default class WeatherDisplay extends React.Component {
+  componentWillUnmount() {
+    console.log("Weather component is unmounted");
+  }
   render() {
     const {
       temperature_2m_max: maxTemp,
